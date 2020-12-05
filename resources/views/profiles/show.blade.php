@@ -1,49 +1,33 @@
-<x-app>
+@component('components.app')
     <header class="mb-6 relative">
-        <div class="relative">
-            <img src="/images/default-profile-banner.jpg"
-                  alt=""
-                  class="mb-2"
-            >
-
-            <img src="{{ $user->avatar }}"
-                 alt=""
-                 class="rounded-full mr-2 absolute bottom-0 transform -translate-x-1/2 translate-y-1/2"
-                 style="left: 50%"
-                 width="150"
-            >
+        <div class="relative mb-10 sm:mb-0">
+            <img class="mb-3" src="/images/default-profile-banner.jpg" alt="">
+            <img src="{{ $user->avatar }}" class="h-24 w-24 sm:h-40 sm:w-40 rounded-full bottom-0 absolute transform -translate-x-1/2 translate-y-1/2" style="left: 50%" width="150" />
         </div>
-
-        <div class="flex justify-between items-center mb-6">
-            <div style="max-width: 270px">
-                <h2 class="font-bold text-2xl mb-0">{{ $user->name }}</h2>
-                <p class="text-sm">Joined {{ $user->created_at->diffForHumans() }}</p>
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <p class="font-bold text-2xl mb-0">{{$user->name}}</p>
+                <p class="text-sm">Joined {{$user->created_at->diffForHumans()}}</p>
             </div>
-
             <div class="flex">
-                @can ('edit', $user)
-                    <a href="{{ $user->path('edit') }}"
-                       class="rounded-full border border-gray-300 py-2 px-4 text-black text-xs mr-2"
-                    >
-                        Edit Profile
-                    </a>
-                @endcan
-
-                <x-follow-button :user="$user"></x-follow-button>
+                @if(current_user()->is($user))
+                <a href="/profile/{{$user->username}}/edit" class="px-3 mx-1 py-2 text-xs text-dark font-semibold shadow bg-white hover:bg-gray-100 border border-black rounded-full">
+                    Edit Profile
+                </a>
+                @endif
+            @unless(current_user()->is($user))
+                <form action="/profile/{{$user->username}}/follow" method="POST">
+                    @csrf
+                    <button type="submit" class="px-6 mx-1 py-2 text-xs text-white font-semibold shadow bg-blue-400 hover:bg-blue-500 focus:outline-none rounded-full">
+                        {{current_user()->following($user)? 'Unfollow' : 'Follow'}}
+                    </button>
+                </form>
+                @endunless
             </div>
         </div>
-
-        <p class="text-sm">
-            The name’s Bugs. Bugs Bunny. Don’t wear it out. Bugs is an anthropomorphic gray
-            and white rabbit or hare who is famous for his flippant, insouciant personality.
-            He is also characterized by a Brooklyn accent, his portrayal as a trickster,
-            and his catch phrase "Eh...What's up, doc?"
-        </p>
-
-
+        <p class="text-xs text-center">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A amet asperiores culpa ea ex exercitationem fugit incidunt nam, perferendis quasi quo repudiandae totam ut! Accusamus deserunt dicta dolorem expedita fugit libero modi odio optio provident tempora. Consectetur illum, inventore ipsa iusto laudantium nemo, placeat quia, ratione sit tempore ullam vero?</p>
     </header>
-
-    @include ('_timeline', [
-        'tweets' => $tweets
+    @include('_timeline',[
+    'tweets' => $tweets
     ])
-</x-app>
+@endcomponent

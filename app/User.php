@@ -2,26 +2,33 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
+use App\Tweet;
+
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable, Followable;
+    use Notifiable,Followable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'username','name','avatar', 'email', 'password',
+    ];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
 
     /**
      * The attributes that should be cast to native types.
@@ -31,42 +38,32 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public function getAvatarAttribute($value)
-    {
-        return asset($value ?: '/images/default-avatar.jpeg');
+    public function getAvatarAttribute($value){
+        if($value){
+            return asset('storage/'.$value);
+        }else {
+            return asset('/images/default-avatar.jpeg');
+        }
     }
-
-    public function setPasswordAttribute($value)
-    {
+    public function setPasswordAttribute($value){
         $this->attributes['password'] = bcrypt($value);
     }
 
     public function timeline()
     {
-        $friends = $this->follows()->pluck('id');
-
-        return Tweet::whereIn('user_id', $friends)
-            ->orWhere('user_id', $this->id)
-            ->withLikes()
-            ->orderByDesc('id')
-            ->paginate(50);
+        $ids = $this->follows()->pluck('id');
+        $ids->push($this->id);
+        return Tweet::whereIn('user_id',$ids)->withLikes()->latest()->paginate(50);
     }
-
-    public function tweets()
-    {
+    public function tweets(){
         return $this->hasMany(Tweet::class)->latest();
     }
 
-    public function likes()
+    public function getRouteKeyName()
     {
-        return $this->hasMany(Like::class);
+        return 'username';
     }
-
-    public function path($append = '')
-    {
-        $path = route('profile', $this->username);
-
-        return $append ? "{$path}/{$append}" : $path;
+    public function likes() {
+        return $this->hasMany(Like::class);
     }
 }

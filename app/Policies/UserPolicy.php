@@ -9,7 +9,12 @@ class UserPolicy
 {
     use HandlesAuthorization;
 
-    public function edit(User $currentUser, User $user)
+    /**
+     * Create a new policy instance.
+     *
+     * @return void
+     */
+    public function edit(User $currentUser,User $user)
     {
         return $currentUser->is($user);
     }

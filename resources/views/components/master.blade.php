@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,32 +12,28 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-
+    <script src="https://unpkg.com/turbolinks"></script>
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
+    <script src="https://kit.fontawesome.com/8d10b2ce7f.js" crossorigin="anonymous"></script>
     <!-- Styles -->
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
 </head>
+
 <body>
     <div id="app">
-        <section class="px-8 py-4 mb-6">
+        <section class="px-8 py-4">
             <header class="container mx-auto">
-                <h1>
-                    <a href="/tweets">
-                        <img
-                            src="/images/logo.svg"
-                            alt="Tweety"
-                        >
-                    </a>
-                </h1>
+                <a href="/">
+                    <h1><img src="/images/logo.svg" alt="Tweety"></h1>
+                </a>
             </header>
         </section>
-
         {{ $slot }}
+
     </div>
 
-    <script src="http://unpkg.com/turbolinks"></script>
 </body>
+
 </html>

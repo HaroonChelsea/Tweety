@@ -17,33 +17,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/tweets', 'TweetsController@index')->name('home');
-    Route::post('/tweets', 'TweetsController@store');
 
-    Route::post('/tweets/{tweet}/like', 'TweetLikesController@store');
-    Route::delete('/tweets/{tweet}/like', 'TweetLikesController@destroy');
 
-    Route::post(
-        '/profiles/{user:username}/follow',
-        'FollowsController@store'
-    )->name('follow');
+Route::middleware('auth')->group(function (){
+    Route::get('/tweets','TweetController@index')->name('home');
+    Route::post('/tweets','TweetController@store');
 
-    Route::get(
-        '/profiles/{user:username}/edit',
-        'ProfilesController@edit'
-    )->middleware('can:edit,user');
+    Route::post('/tweets/{tweet}/like','TweetLikesController@store');
+    Route::delete('/tweets/{tweet}/removeLike','TweetLikesController@destroy');
 
-    Route::patch(
-        '/profiles/{user:username}',
-        'ProfilesController@update'
-    )->middleware('can:edit,user');
-
-    Route::get('/explore', 'ExploreController');
+    Route::post('/profile/{user:username}/follow','FollowsController@store');
+    Route::get('/profile/{user:username}/edit','ProfilesController@edit')->middleware('can:edit,user');
+    Route::patch('/profile/{user:username}','ProfilesController@update')->middleware('can:edit,user');
+    Route::get('/explore','ExploreController@index');
 });
 
 Route::get('/profiles/{user:username}', 'ProfilesController@show')->name(
     'profile'
 );
-
 Auth::routes();

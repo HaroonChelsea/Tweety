@@ -1,7 +1,4 @@
-<x-app>
-    <div>
-        @include ('_publish-tweet-panel')
-
-        @include ('_timeline')
-    </div>
-</x-app>
+@component('components.app')
+    @include('_new-tweet')
+    @include('_timeline')
+@endcomponent
